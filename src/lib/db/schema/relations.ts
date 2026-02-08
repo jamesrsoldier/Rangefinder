@@ -24,6 +24,7 @@ import {
 
 export const usersRelations = relations(users, ({ many }) => ({
   organizationMembers: many(organizationMembers),
+  createdOrganizations: many(organizations),
 }));
 
 export const organizationsRelations = relations(organizations, ({ one, many }) => ({
@@ -57,8 +58,13 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   }),
   trackedKeywords: many(trackedKeywords),
   queryRuns: many(queryRuns),
+  queryResults: many(queryResults),
+  citations: many(citations),
+  brandMentions: many(brandMentions),
   competitors: many(competitors),
+  competitorCitations: many(competitorCitations),
   alerts: many(alerts),
+  alertEvents: many(alertEvents),
   ga4TrafficData: many(ga4TrafficData),
   gscData: many(gscData),
 }));
@@ -75,6 +81,7 @@ export const trackedKeywordsRelations = relations(trackedKeywords, ({ one, many 
   queryResults: many(queryResults),
   citations: many(citations),
   brandMentions: many(brandMentions),
+  competitorCitations: many(competitorCitations),
 }));
 
 export const queryRunsRelations = relations(queryRuns, ({ one, many }) => ({
