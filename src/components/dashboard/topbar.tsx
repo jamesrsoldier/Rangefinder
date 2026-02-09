@@ -1,7 +1,6 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
-import { Bell, Menu } from "lucide-react";
+import { Bell, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/shared/date-range-picker";
@@ -10,6 +9,22 @@ import { useProject } from "@/hooks/use-project";
 import { useDateRange } from "@/hooks/use-date-range";
 import { useAlertEvents } from "@/hooks/use-dashboard-data";
 import { MobileSidebar } from "./mobile-sidebar";
+
+const isMockMode = process.env.NEXT_PUBLIC_MOCK_MODE === 'true';
+
+function MockUserButton() {
+  return (
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+      <User className="h-4 w-4" />
+    </div>
+  );
+}
+
+function RealUserButton() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { UserButton } = require("@clerk/nextjs");
+  return <UserButton afterSignOutUrl="/" />;
+}
 
 export function Topbar() {
   const { project, projects, projectId, setProject } = useProject();
@@ -60,7 +75,7 @@ export function Topbar() {
             </span>
           )}
         </Button>
-        <UserButton afterSignOutUrl="/" />
+        {isMockMode ? <MockUserButton /> : <RealUserButton />}
       </div>
     </header>
   );

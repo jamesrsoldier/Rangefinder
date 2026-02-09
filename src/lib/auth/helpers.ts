@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 import { eq, and } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import {
@@ -7,6 +6,9 @@ import {
   organizationMembers,
   projects,
 } from '@/lib/db/schema';
+
+const isMockMode = process.env.USE_MOCK_ENGINE === 'true';
+const MOCK_CLERK_ID = 'mock_clerk_user_001';
 
 export interface AuthUser {
   id: string;
@@ -35,8 +37,21 @@ export interface AuthContext {
   };
 }
 
+/**
+ * Get the current Clerk user ID.
+ * In mock mode, returns a fixed mock user ID without calling Clerk.
+ */
+async function getClerkUserId(): Promise<string | null> {
+  if (isMockMode) {
+    return MOCK_CLERK_ID;
+  }
+  const { auth } = await import('@clerk/nextjs/server');
+  const { userId } = await auth();
+  return userId;
+}
+
 export async function getAuthUser(): Promise<AuthUser | null> {
-  const { userId: clerkId } = await auth();
+  const clerkId = await getClerkUserId();
   if (!clerkId) return null;
 
   const db = getDb();
