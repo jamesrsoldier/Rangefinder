@@ -16,6 +16,7 @@ export interface AuthUser {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  isAdmin: boolean;
 }
 
 export interface AuthContext {
@@ -69,6 +70,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
+    isAdmin: user.isAdmin,
   };
 }
 
@@ -76,6 +78,14 @@ export async function requireAuth(): Promise<AuthUser> {
   const user = await getAuthUser();
   if (!user) {
     throw new AuthError('Unauthorized', 401);
+  }
+  return user;
+}
+
+export async function requireAdmin(): Promise<AuthUser> {
+  const user = await requireAuth();
+  if (!user.isAdmin) {
+    throw new AuthError('Forbidden: admin access required', 403);
   }
   return user;
 }

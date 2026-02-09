@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import useSWR from "swr";
 import {
   LayoutDashboard,
   Eye,
@@ -12,6 +13,7 @@ import {
   Settings,
   CreditCard,
   Link2,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,8 +32,15 @@ const settingsItems = [
   { href: "/dashboard/settings/billing", label: "Billing", icon: CreditCard },
 ];
 
+const adminFetcher = (url: string) => fetch(url).then(r => r.json());
+
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: adminCheck } = useSWR('/api/admin/check', adminFetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+  });
+  const isAdmin = adminCheck?.isAdmin === true;
 
   return (
     <aside className="hidden md:flex h-full w-64 flex-col border-r bg-background">
@@ -86,6 +95,21 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        {isAdmin && (
+          <>
+            <div className="my-4">
+              <div className="h-px bg-border" />
+            </div>
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin Panel
+            </Link>
+          </>
+        )}
       </nav>
     </aside>
   );

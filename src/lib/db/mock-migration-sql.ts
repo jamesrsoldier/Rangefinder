@@ -20,6 +20,7 @@ CREATE TABLE "users" (
   "first_name" text,
   "last_name" text,
   "image_url" text,
+  "is_admin" boolean DEFAULT false NOT NULL,
   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
   "updated_at" timestamp with time zone DEFAULT now() NOT NULL,
   CONSTRAINT "users_clerk_id_unique" UNIQUE("clerk_id")

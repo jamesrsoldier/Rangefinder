@@ -33,14 +33,15 @@ const MOCK_ALERT_ID = '00000000-0000-4000-8000-000000000030';
 export async function seedMockData(db: any) {
   // 1. Create mock user
   await db.execute(sql`
-    INSERT INTO users (id, clerk_id, email, first_name, last_name, image_url)
+    INSERT INTO users (id, clerk_id, email, first_name, last_name, image_url, is_admin)
     VALUES (
       ${MOCK_USER_ID},
       ${MOCK_CLERK_ID},
       'demo@rangefinder.dev',
       'Demo',
       'User',
-      NULL
+      NULL,
+      true
     )
     ON CONFLICT (clerk_id) DO NOTHING
   `);
