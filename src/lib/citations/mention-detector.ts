@@ -189,6 +189,7 @@ function levenshteinDistance(a: string, b: string): number {
  * Checks for positive/negative signal words near the brand mention.
  * For MVP — can be upgraded to LLM-based sentiment analysis later.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function detectSimpleSentiment(context: string, _brand: string): SentimentType | null {
   const lower = context.toLowerCase();
 

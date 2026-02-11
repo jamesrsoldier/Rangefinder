@@ -37,16 +37,19 @@ export async function GET() {
       WHERE created_at >= now() - interval '7 days'
     `);
 
+    type CountRow = { count: number };
+    type TierRow = { tier: string; count: number };
+
     return NextResponse.json({
-      users: (userCount as any).count,
-      organizations: (orgCount as any).count,
-      projects: (projectCount as any).count,
-      activeKeywords: (keywordCount as any).count,
-      queryRuns: (queryRunCount as any).count,
-      totalCitations: (citationCount as any).count,
-      recentSignups: (recentSignups as any).count,
-      recentQueryRuns: (recentRuns as any).count,
-      tierDistribution: (tierRows as any[]).map((r: any) => ({
+      users: (userCount as unknown as CountRow).count,
+      organizations: (orgCount as unknown as CountRow).count,
+      projects: (projectCount as unknown as CountRow).count,
+      activeKeywords: (keywordCount as unknown as CountRow).count,
+      queryRuns: (queryRunCount as unknown as CountRow).count,
+      totalCitations: (citationCount as unknown as CountRow).count,
+      recentSignups: (recentSignups as unknown as CountRow).count,
+      recentQueryRuns: (recentRuns as unknown as CountRow).count,
+      tierDistribution: (tierRows as unknown as TierRow[]).map((r) => ({
         tier: r.tier,
         count: r.count,
       })),

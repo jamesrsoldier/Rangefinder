@@ -12,9 +12,13 @@ import {
   Settings,
   CreditCard,
   Link2,
+  ShieldCheck,
 } from "lucide-react";
+import useSWR from "swr";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+
+const adminFetcher = (url: string) => fetch(url).then(r => r.json());
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -33,6 +37,11 @@ const settingsItems = [
 
 export function MobileSidebar() {
   const pathname = usePathname();
+  const { data: adminCheck } = useSWR('/api/admin/check', adminFetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+  });
+  const isAdmin = adminCheck?.isAdmin === true;
 
   return (
     <div className="flex h-full flex-col">
@@ -89,6 +98,23 @@ export function MobileSidebar() {
             </SheetClose>
           );
         })}
+
+        {isAdmin && (
+          <>
+            <div className="my-4">
+              <div className="h-px bg-border" />
+            </div>
+            <SheetClose asChild>
+              <Link
+                href="/admin"
+                className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Admin Panel
+              </Link>
+            </SheetClose>
+          </>
+        )}
       </nav>
     </div>
   );

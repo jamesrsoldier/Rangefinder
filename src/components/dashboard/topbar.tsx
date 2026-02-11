@@ -27,7 +27,7 @@ function RealUserButton() {
 }
 
 export function Topbar() {
-  const { project, projects, projectId, setProject } = useProject();
+  const { projects, projectId, setProject } = useProject();
   const { from, to, setRange } = useDateRange();
   const { data: alerts } = useAlertEvents(projectId, true);
   const unreadCount = alerts?.filter((a) => !a.isRead).length ?? 0;

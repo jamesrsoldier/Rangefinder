@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 const isMockMode = process.env.USE_MOCK_ENGINE === 'true';
 
 // Dynamically load ClerkProvider only when not in mock mode
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const ClerkProvider: React.ComponentType<{ children: React.ReactNode }> | null =
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   isMockMode ? null : require("@clerk/nextjs").ClerkProvider;
 
 export default function RootLayout({

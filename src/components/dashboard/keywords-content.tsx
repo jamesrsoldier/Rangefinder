@@ -19,7 +19,7 @@ import { PLAN_LIMITS } from "@/types";
 import type { SubscriptionTier } from "@/types";
 
 export function KeywordsContent() {
-  const { projectId, project, isLoading: projectLoading } = useProject();
+  const { projectId, isLoading: projectLoading } = useProject();
   const { data: keywords, isLoading, error, mutate } = useKeywords(projectId);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [bulkText, setBulkText] = useState("");

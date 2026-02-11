@@ -30,7 +30,8 @@ const MOCK_ALERT_ID = '00000000-0000-4000-8000-000000000030';
  * Seeds the mock PGlite database with demo data.
  * Uses raw SQL via Drizzle's sql template for reliability.
  */
-export async function seedMockData(db: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function seedMockData(db: { execute: (query: any) => Promise<any> }) {
   // 1. Create mock user
   await db.execute(sql`
     INSERT INTO users (id, clerk_id, email, first_name, last_name, image_url, is_admin)
