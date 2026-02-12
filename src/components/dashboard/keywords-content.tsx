@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Pause, Play, Trash2, Tags } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Plus, Pause, Play, Trash2, Tags, Radar, Loader2, CheckCircle2, XCircle, Clock } from "lucide-react";
+import useSWR from "swr";
 import { useProject } from "@/hooks/use-project";
 import { useKeywords } from "@/hooks/use-dashboard-data";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +19,66 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PLAN_LIMITS } from "@/types";
 import type { SubscriptionTier } from "@/types";
 
+interface QueryRun {
+  id: string;
+  status: string;
+  engineTypes: string[];
+  totalKeywords: number;
+  completedKeywords: number;
+  failedKeywords: number;
+  startedAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+}
+
+const fetcher = (url: string) =>
+  fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`API error: ${r.status}`);
+    return r.json();
+  });
+
+function ScanStatusBadge({ status }: { status: string }) {
+  switch (status) {
+    case "running":
+      return (
+        <Badge variant="default" className="gap-1">
+          <Loader2 className="h-3 w-3 animate-spin" />
+          Running
+        </Badge>
+      );
+    case "completed":
+      return (
+        <Badge variant="secondary" className="gap-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+          <CheckCircle2 className="h-3 w-3" />
+          Completed
+        </Badge>
+      );
+    case "failed":
+      return (
+        <Badge variant="destructive" className="gap-1">
+          <XCircle className="h-3 w-3" />
+          Failed
+        </Badge>
+      );
+    case "partial":
+      return (
+        <Badge variant="secondary" className="gap-1 bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+          <CheckCircle2 className="h-3 w-3" />
+          Partial
+        </Badge>
+      );
+    case "pending":
+      return (
+        <Badge variant="secondary" className="gap-1">
+          <Clock className="h-3 w-3" />
+          Pending
+        </Badge>
+      );
+    default:
+      return <Badge variant="secondary">{status}</Badge>;
+  }
+}
+
 export function KeywordsContent() {
   const { projectId, isLoading: projectLoading } = useProject();
   const { data: keywords, isLoading, error, mutate } = useKeywords(projectId);
@@ -25,11 +86,52 @@ export function KeywordsContent() {
   const [bulkText, setBulkText] = useState("");
   const [category, setCategory] = useState("");
   const [saving, setSaving] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanMessage, setScanMessage] = useState<string | null>(null);
+
+  // Fetch recent scan history
+  const { data: recentRuns, mutate: mutateRuns } = useSWR<QueryRun[]>(
+    projectId ? `/api/projects/${projectId}/monitoring?limit=5` : null,
+    fetcher,
+    { refreshInterval: scanning ? 3000 : 0 } // Poll while scanning
+  );
 
   // Tier comes from org-level billing; default to free when unknown
   const [tier] = useState<SubscriptionTier>("free");
   const limits = PLAN_LIMITS[tier];
   const keywordCount = keywords?.length ?? 0;
+
+  const isRunning = recentRuns?.some((r) => r.status === "running" || r.status === "pending");
+
+  const handleRunScan = useCallback(async () => {
+    if (!projectId || scanning) return;
+    setScanning(true);
+    setScanMessage(null);
+
+    try {
+      const res = await fetch(`/api/projects/${projectId}/monitoring`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setScanMessage(data.error || "Failed to trigger scan");
+        setScanning(false);
+        return;
+      }
+
+      setScanMessage(`Scan started: ${data.totalKeywords} keywords across ${data.engineTypes.length} engine(s)`);
+      mutateRuns();
+
+      // Keep polling state for a bit, then rely on SWR refreshInterval
+      setTimeout(() => setScanning(false), 5000);
+    } catch {
+      setScanMessage("Failed to trigger scan. Is Inngest running?");
+      setScanning(false);
+    }
+  }, [projectId, scanning, mutateRuns]);
 
   if (projectLoading || isLoading) return <TableSkeleton rows={10} />;
   if (error) return <InlineError message="Failed to load keywords" onRetry={() => mutate()} />;
@@ -97,47 +199,98 @@ export function KeywordsContent() {
           </div>
         </div>
 
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Keywords
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add Keywords</DialogTitle>
-              <DialogDescription>Enter one keyword per line to add them for tracking.</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Keywords (one per line)</Label>
-                <Textarea
-                  rows={6}
-                  placeholder={"best CRM software\nCRM comparison 2025\nwhat is the best CRM"}
-                  value={bulkText}
-                  onChange={(e) => setBulkText(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="kw-category">Category (optional)</Label>
-                <Input
-                  id="kw-category"
-                  placeholder="e.g., CRM"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
-              <Button onClick={handleAdd} disabled={saving || newCount === 0}>
-                {saving ? "Adding..." : `Add ${newCount} Keyword${newCount !== 1 ? "s" : ""}`}
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRunScan}
+            disabled={scanning || isRunning || keywordCount === 0}
+          >
+            {scanning || isRunning ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Radar className="mr-2 h-4 w-4" />
+            )}
+            {scanning || isRunning ? "Scanning..." : "Run Scan"}
+          </Button>
+
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Keywords
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Keywords</DialogTitle>
+                <DialogDescription>Enter one keyword per line to add them for tracking.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>Keywords (one per line)</Label>
+                  <Textarea
+                    rows={6}
+                    placeholder={"best CRM software\nCRM comparison 2025\nwhat is the best CRM"}
+                    value={bulkText}
+                    onChange={(e) => setBulkText(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="kw-category">Category (optional)</Label>
+                  <Input
+                    id="kw-category"
+                    placeholder="e.g., CRM"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
+                <Button onClick={handleAdd} disabled={saving || newCount === 0}>
+                  {saving ? "Adding..." : `Add ${newCount} Keyword${newCount !== 1 ? "s" : ""}`}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
+
+      {/* Scan message */}
+      {scanMessage && (
+        <div className="rounded-lg border bg-muted/50 p-3 text-sm text-muted-foreground">
+          {scanMessage}
+        </div>
+      )}
+
+      {/* Recent scan history */}
+      {recentRuns && recentRuns.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-sm font-medium mb-3">Recent Scans</p>
+            <div className="space-y-2">
+              {recentRuns.slice(0, 3).map((run) => (
+                <div key={run.id} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <ScanStatusBadge status={run.status} />
+                    <span className="text-muted-foreground">
+                      {run.totalKeywords} keywords, {run.engineTypes.length} engine(s)
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {run.completedAt
+                      ? new Date(run.completedAt).toLocaleString()
+                      : run.startedAt
+                        ? `Started ${new Date(run.startedAt).toLocaleTimeString()}`
+                        : new Date(run.createdAt).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {!keywords || keywords.length === 0 ? (
         <EmptyState
