@@ -10,7 +10,7 @@ import { TopPagesTable } from "./top-pages-table";
 import { AlertFeed } from "./alert-feed";
 import { DashboardSkeleton } from "@/components/shared/loading-skeleton";
 import { InlineError } from "@/components/shared/error-boundary";
-import { EmptyState } from "@/components/shared/empty-state";
+import { CreateProjectDialog } from "./create-project-dialog";
 import { LayoutDashboard } from "lucide-react";
 
 export function OverviewContent() {
@@ -22,12 +22,18 @@ export function OverviewContent() {
 
   if (!projectId) {
     return (
-      <EmptyState
-        icon={<LayoutDashboard className="h-6 w-6" />}
-        title="No project selected"
-        description="Create a project to start tracking your AI visibility."
-        action={{ label: "Create Project", href: "/dashboard/settings" }}
-      />
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <LayoutDashboard className="h-6 w-6" />
+        </div>
+        <h3 className="mt-4 text-lg font-semibold">No project yet</h3>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+          Create a project to start tracking your brand&apos;s visibility across AI engines.
+        </p>
+        <div className="mt-4">
+          <CreateProjectDialog />
+        </div>
+      </div>
     );
   }
 

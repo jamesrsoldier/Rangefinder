@@ -8,11 +8,12 @@ import { disconnectGoogle } from '@/lib/analytics/google-auth';
  */
 export async function POST(
   _request: NextRequest,
-  { params }: { params: { projectId: string } },
+  { params }: { params: Promise<{ projectId: string }> },
 ) {
   try {
-    await requireProjectAccess(params.projectId);
-    await disconnectGoogle(params.projectId);
+    const { projectId } = await params;
+    await requireProjectAccess(projectId);
+    await disconnectGoogle(projectId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

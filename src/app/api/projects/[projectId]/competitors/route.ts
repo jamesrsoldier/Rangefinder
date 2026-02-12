@@ -2,20 +2,13 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
-import { alerts } from '@/lib/db/schema';
+import { competitors } from '@/lib/db/schema';
 import { requireProjectAccess, handleAuthError } from '@/lib/auth/helpers';
 
-const createAlertSchema = z.object({
-  alertType: z.enum([
-    'visibility_drop',
-    'visibility_increase',
-    'new_citation',
-    'lost_citation',
-    'competitor_change',
-    'negative_sentiment',
-  ]),
-  channel: z.enum(['email', 'in_app']).optional().default('in_app'),
-  threshold: z.number().min(0).max(1).optional(),
+const addCompetitorSchema = z.object({
+  name: z.string().min(1).max(200),
+  domain: z.string().min(1).max(500),
+  aliases: z.array(z.string()).optional(),
 });
 
 export async function GET(
@@ -27,19 +20,25 @@ export async function GET(
     await requireProjectAccess(projectId);
     const db = getDb();
 
-    const projectAlerts = await db
+    const result = await db
       .select({
-        id: alerts.id,
-        alertType: alerts.alertType,
-        channel: alerts.channel,
-        threshold: alerts.threshold,
-        isEnabled: alerts.isEnabled,
-        createdAt: alerts.createdAt,
+        id: competitors.id,
+        domain: competitors.domain,
+        name: competitors.name,
+        aliases: competitors.aliases,
+        createdAt: competitors.createdAt,
       })
-      .from(alerts)
-      .where(eq(alerts.projectId, projectId));
+      .from(competitors)
+      .where(eq(competitors.projectId, projectId))
+      .orderBy(competitors.createdAt);
 
-    return Response.json(projectAlerts);
+    return Response.json(
+      result.map((c) => ({
+        ...c,
+        aliases: c.aliases ?? [],
+        createdAt: c.createdAt.toISOString(),
+      }))
+    );
   } catch (error) {
     return handleAuthError(error);
   }
@@ -54,16 +53,16 @@ export async function POST(
     await requireProjectAccess(projectId);
 
     const body = await request.json();
-    const data = createAlertSchema.parse(body);
+    const data = addCompetitorSchema.parse(body);
     const db = getDb();
 
     const [created] = await db
-      .insert(alerts)
+      .insert(competitors)
       .values({
         projectId,
-        alertType: data.alertType,
-        channel: data.channel,
-        threshold: data.threshold ?? null,
+        name: data.name,
+        domain: data.domain,
+        aliases: data.aliases ?? null,
       })
       .returning();
 

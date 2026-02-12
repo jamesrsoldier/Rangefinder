@@ -6,10 +6,11 @@ import { users } from '@/lib/db/schema';
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     await requireAdmin();
+    const { userId } = await params;
     const db = getDb();
     const body = await req.json();
 
@@ -28,7 +29,7 @@ export async function PATCH(
     const [updated] = await db
       .update(users)
       .set(updates)
-      .where(eq(users.id, params.userId))
+      .where(eq(users.id, userId))
       .returning();
 
     if (!updated) {
@@ -49,22 +50,23 @@ export async function PATCH(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const admin = await requireAdmin();
+    const { userId } = await params;
     const db = getDb();
 
     // Prevent self-deletion
-    if (admin.id === params.userId) {
+    if (admin.id === userId) {
       return NextResponse.json({ error: 'Cannot delete your own account' }, { status: 400 });
     }
 
     // Delete org memberships first (cascade), then user
-    await db.execute(sql`DELETE FROM organization_members WHERE user_id = ${params.userId}`);
+    await db.execute(sql`DELETE FROM organization_members WHERE user_id = ${userId}`);
     const [deleted] = await db
       .delete(users)
-      .where(eq(users.id, params.userId))
+      .where(eq(users.id, userId))
       .returning();
 
     if (!deleted) {

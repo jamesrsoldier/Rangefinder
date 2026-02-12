@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -20,32 +21,20 @@ export const metadata: Metadata = {
   description: "Track brand visibility across AI answer engines",
 };
 
-// In mock mode, skip ClerkProvider (no Clerk session needed)
-const isMockMode = process.env.USE_MOCK_ENGINE === 'true';
-
-// Dynamically load ClerkProvider only when not in mock mode
-const ClerkProvider: React.ComponentType<{ children: React.ReactNode }> | null =
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  isMockMode ? null : require("@clerk/nextjs").ClerkProvider;
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const body = (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+  return (
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
-
-  if (ClerkProvider) {
-    return <ClerkProvider>{body}</ClerkProvider>;
-  }
-
-  return body;
 }

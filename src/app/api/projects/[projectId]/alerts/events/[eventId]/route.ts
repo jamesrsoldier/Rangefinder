@@ -11,10 +11,10 @@ const updateEventSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { projectId: string; eventId: string } }
+  { params }: { params: Promise<{ projectId: string; eventId: string }> }
 ) {
   try {
-    const { projectId, eventId } = params;
+    const { projectId, eventId } = await params;
     await requireProjectAccess(projectId);
 
     const body = await request.json();

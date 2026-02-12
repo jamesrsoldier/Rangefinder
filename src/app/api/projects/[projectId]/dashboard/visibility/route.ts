@@ -21,10 +21,10 @@ const ENGINE_WEIGHTS: Record<EngineType, number> = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
-    const { projectId } = params;
+    const { projectId } = await params;
     await requireProjectAccess(projectId);
 
     const searchParams = request.nextUrl.searchParams;

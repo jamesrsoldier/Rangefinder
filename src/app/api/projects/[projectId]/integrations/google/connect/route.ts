@@ -15,10 +15,11 @@ const connectBodySchema = z.object({
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { projectId: string } },
+  { params }: { params: Promise<{ projectId: string }> },
 ) {
   try {
-    const { organization } = await requireProjectAccess(params.projectId);
+    const { projectId } = await params;
+    const { organization } = await requireProjectAccess(projectId);
 
     // Free tier cannot connect Google integrations
     if (!canUseGA4(organization.subscriptionTier as SubscriptionTier)) {
@@ -39,7 +40,7 @@ export async function POST(
 
     await exchangeAndStoreTokens({
       code: parsed.data.code,
-      projectId: params.projectId,
+      projectId,
     });
 
     return NextResponse.json({ success: true });
@@ -64,10 +65,11 @@ export async function POST(
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { projectId: string } },
+  { params }: { params: Promise<{ projectId: string }> },
 ) {
   try {
-    const { organization } = await requireProjectAccess(params.projectId);
+    const { projectId } = await params;
+    const { organization } = await requireProjectAccess(projectId);
 
     if (!canUseGA4(organization.subscriptionTier as SubscriptionTier)) {
       return NextResponse.json(
@@ -76,7 +78,7 @@ export async function GET(
       );
     }
 
-    const authUrl = getAuthUrl(params.projectId);
+    const authUrl = getAuthUrl(projectId);
     return NextResponse.json({ authUrl });
   } catch (error) {
     if (error instanceof AuthError) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Menu, User } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/shared/date-range-picker";
@@ -10,27 +11,11 @@ import { useDateRange } from "@/hooks/use-date-range";
 import { useAlertEvents } from "@/hooks/use-dashboard-data";
 import { MobileSidebar } from "./mobile-sidebar";
 
-const isMockMode = process.env.NEXT_PUBLIC_MOCK_MODE === 'true';
-
-function MockUserButton() {
-  return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
-      <User className="h-4 w-4" />
-    </div>
-  );
-}
-
-function RealUserButton() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { UserButton } = require("@clerk/nextjs");
-  return <UserButton afterSignOutUrl="/" />;
-}
-
 export function Topbar() {
   const { projects, projectId, setProject } = useProject();
   const { from, to, setRange } = useDateRange();
   const { data: alerts } = useAlertEvents(projectId, true);
-  const unreadCount = alerts?.filter((a) => !a.isRead).length ?? 0;
+  const unreadCount = Array.isArray(alerts) ? alerts.filter((a) => !a.isRead).length : 0;
 
   return (
     <header className="flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -53,7 +38,7 @@ export function Topbar() {
             <SelectValue placeholder="Select project" />
           </SelectTrigger>
           <SelectContent>
-            {projects.map((p) => (
+            {(Array.isArray(projects) ? projects : []).map((p) => (
               <SelectItem key={p.id} value={p.id}>
                 {p.name}
               </SelectItem>
@@ -75,7 +60,7 @@ export function Topbar() {
             </span>
           )}
         </Button>
-        {isMockMode ? <MockUserButton /> : <RealUserButton />}
+        <UserButton afterSignOutUrl="/" />
       </div>
     </header>
   );

@@ -24,10 +24,11 @@ const configureBodySchema = z.object({
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { projectId: string } },
+  { params }: { params: Promise<{ projectId: string }> },
 ) {
   try {
-    const { organization } = await requireProjectAccess(params.projectId);
+    const { projectId } = await params;
+    const { organization } = await requireProjectAccess(projectId);
 
     const body = await request.json();
     const parsed = configureBodySchema.safeParse(body);
@@ -75,7 +76,7 @@ export async function POST(
     await db
       .update(projects)
       .set(updateData)
-      .where(eq(projects.id, params.projectId));
+      .where(eq(projects.id, projectId));
 
     return NextResponse.json({ success: true });
   } catch (error) {

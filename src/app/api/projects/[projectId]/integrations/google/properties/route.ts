@@ -13,10 +13,11 @@ import { eq } from 'drizzle-orm';
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { projectId: string } },
+  { params }: { params: Promise<{ projectId: string }> },
 ) {
   try {
-    await requireProjectAccess(params.projectId);
+    const { projectId } = await params;
+    await requireProjectAccess(projectId);
 
     // Verify Google is connected
     const db = getDb();
@@ -26,7 +27,7 @@ export async function GET(
         googleRefreshToken: projects.googleRefreshToken,
       })
       .from(projects)
-      .where(eq(projects.id, params.projectId))
+      .where(eq(projects.id, projectId))
       .limit(1);
 
     if (!project?.googleAccessToken || !project?.googleRefreshToken) {
@@ -38,11 +39,11 @@ export async function GET(
 
     // Fetch GA4 properties and GSC sites in parallel
     const [ga4Properties, gscSites] = await Promise.all([
-      listGA4Properties(params.projectId).catch((err) => {
+      listGA4Properties(projectId).catch((err) => {
         console.error('Failed to list GA4 properties:', err);
         return [];
       }),
-      listGSCSites(params.projectId).catch((err) => {
+      listGSCSites(projectId).catch((err) => {
         console.error('Failed to list GSC sites:', err);
         return [];
       }),

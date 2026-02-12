@@ -6,10 +6,11 @@ import { organizations } from '@/lib/db/schema';
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { orgId: string } }
+  { params }: { params: Promise<{ orgId: string }> }
 ) {
   try {
     await requireAdmin();
+    const { orgId } = await params;
     const db = getDb();
     const body = await req.json();
 
@@ -27,7 +28,7 @@ export async function PATCH(
     const [updated] = await db
       .update(organizations)
       .set(updates)
-      .where(eq(organizations.id, params.orgId))
+      .where(eq(organizations.id, orgId))
       .returning();
 
     if (!updated) {
@@ -42,15 +43,16 @@ export async function PATCH(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { orgId: string } }
+  { params }: { params: Promise<{ orgId: string }> }
 ) {
   try {
     await requireAdmin();
+    const { orgId } = await params;
     const db = getDb();
 
     const [deleted] = await db
       .delete(organizations)
-      .where(eq(organizations.id, params.orgId))
+      .where(eq(organizations.id, orgId))
       .returning();
 
     if (!deleted) {

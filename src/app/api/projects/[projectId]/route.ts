@@ -15,10 +15,10 @@ const updateProjectSchema = z.object({
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
-    const { projectId } = params;
+    const { projectId } = await params;
     await requireProjectAccess(projectId);
     const db = getDb();
 
@@ -65,10 +65,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
-    const { projectId } = params;
+    const { projectId } = await params;
     await requireProjectAccess(projectId);
 
     const body = await request.json();
@@ -123,10 +123,10 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
-    const { projectId } = params;
+    const { projectId } = await params;
     await requireProjectAccess(projectId);
     const db = getDb();
 

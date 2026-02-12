@@ -56,11 +56,38 @@ export async function getAuthUser(): Promise<AuthUser | null> {
   if (!clerkId) return null;
 
   const db = getDb();
-  const [user] = await db
+  let [user] = await db
     .select()
     .from(users)
     .where(eq(users.clerkId, clerkId))
     .limit(1);
+
+  // Auto-provision: if authenticated via Clerk but no DB record yet,
+  // create the user (covers first sign-in before webhook fires)
+  if (!user && !isMockMode) {
+    const { currentUser } = await import('@clerk/nextjs/server');
+    const clerkUser = await currentUser();
+    if (clerkUser) {
+      const inserted = await db
+        .insert(users)
+        .values({
+          clerkId: clerkUser.id,
+          email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
+          firstName: clerkUser.firstName,
+          lastName: clerkUser.lastName,
+          imageUrl: clerkUser.imageUrl,
+          isAdmin: false,
+        })
+        .onConflictDoNothing({ target: users.clerkId })
+        .returning();
+      user = inserted[0] ?? undefined;
+
+      // Also auto-create an organization for first-time users
+      if (user) {
+        await getOrCreateOrg(user.id);
+      }
+    }
+  }
 
   if (!user) return null;
 

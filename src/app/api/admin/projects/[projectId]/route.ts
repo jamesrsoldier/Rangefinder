@@ -6,15 +6,16 @@ import { projects } from '@/lib/db/schema';
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     await requireAdmin();
+    const { projectId } = await params;
     const db = getDb();
 
     const [deleted] = await db
       .delete(projects)
-      .where(eq(projects.id, params.projectId))
+      .where(eq(projects.id, projectId))
       .returning();
 
     if (!deleted) {

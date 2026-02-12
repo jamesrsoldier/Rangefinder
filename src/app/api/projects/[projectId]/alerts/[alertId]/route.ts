@@ -13,10 +13,10 @@ const updateAlertSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { projectId: string; alertId: string } }
+  { params }: { params: Promise<{ projectId: string; alertId: string }> }
 ) {
   try {
-    const { projectId, alertId } = params;
+    const { projectId, alertId } = await params;
     await requireProjectAccess(projectId);
 
     const body = await request.json();
