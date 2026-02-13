@@ -10,6 +10,7 @@ import {
 import { requireProjectAccess, handleAuthError } from '@/lib/auth/helpers';
 import { inngest } from '@/lib/inngest/client';
 import { getPlanLimits, canUseEngine } from '@/lib/billing/plan-limits';
+import { getAvailableEngines } from '@/lib/engines';
 import type { EngineType, SubscriptionTier } from '@/types';
 
 /**
@@ -128,8 +129,9 @@ export async function POST(
       );
     }
 
-    // Determine available engines for the tier
-    const engineTypes = limits.engines.filter((e) => canUseEngine(tier, e));
+    // Determine available engines: must be both allowed by tier AND have an implemented adapter
+    const implementedEngines = new Set(getAvailableEngines());
+    const engineTypes = limits.engines.filter((e) => canUseEngine(tier, e) && implementedEngines.has(e));
 
     // Parse optional body for engine/keyword filtering
     let selectedEngines = engineTypes;

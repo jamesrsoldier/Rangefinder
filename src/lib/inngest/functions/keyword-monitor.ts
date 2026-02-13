@@ -8,7 +8,7 @@ import {
   organizations,
 } from '@/lib/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
-import { getAdapter } from '@/lib/engines';
+import { getAdapter, getAvailableEngines } from '@/lib/engines';
 import { getPlanLimits, canUseEngine } from '@/lib/billing/plan-limits';
 import type { EngineType, SubscriptionTier } from '@/types';
 
@@ -58,8 +58,9 @@ export const scheduledMonitor = inngest.createFunction(
 
           if (keywords.length === 0) return null;
 
+          const implemented = new Set(getAvailableEngines());
           const engineTypes = limits.engines.filter((e) =>
-            canUseEngine(tier, e),
+            canUseEngine(tier, e) && implemented.has(e),
           );
 
           const [run] = await db
@@ -177,9 +178,10 @@ export const keywordMonitor = inngest.createFunction(
     let completedCount = 0;
     let failedCount = 0;
 
-    // Filter to only engines that are available for the tier
+    // Filter to only engines that are available for the tier AND have an implemented adapter
+    const implementedEngines = new Set(getAvailableEngines());
     const validEngines = (engineTypes as EngineType[]).filter((e) =>
-      canUseEngine(context.tier, e),
+      canUseEngine(context.tier, e) && implementedEngines.has(e),
     );
 
     for (const keyword of context.keywords) {
