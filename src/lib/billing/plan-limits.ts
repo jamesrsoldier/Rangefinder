@@ -27,3 +27,11 @@ export function canUseGA4(tier: SubscriptionTier): boolean {
 export function canUseGSC(tier: SubscriptionTier): boolean {
   return PLAN_LIMITS[tier].gscIntegration;
 }
+
+export function canUseAiOptimization(tier: SubscriptionTier): boolean {
+  return PLAN_LIMITS[tier].aiPoweredOptimization;
+}
+
+export function getAiAnalysisLimit(tier: SubscriptionTier): number {
+  return PLAN_LIMITS[tier].aiAnalysisPerMonth;
+}

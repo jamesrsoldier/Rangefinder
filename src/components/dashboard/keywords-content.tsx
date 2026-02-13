@@ -5,6 +5,7 @@ import { Plus, Pause, Play, Trash2, Tags, Radar, Loader2, CheckCircle2, XCircle,
 import useSWR from "swr";
 import { useProject } from "@/hooks/use-project";
 import { useKeywords } from "@/hooks/use-dashboard-data";
+import { useOptimizationSummary } from "@/hooks/use-optimization-data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,7 @@ function ScanStatusBadge({ status }: { status: string }) {
 export function KeywordsContent() {
   const { projectId, isLoading: projectLoading } = useProject();
   const { data: keywords, isLoading, error, mutate } = useKeywords(projectId);
+  const { data: optSummary } = useOptimizationSummary(projectId);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [bulkText, setBulkText] = useState("");
   const [category, setCategory] = useState("");
@@ -322,7 +324,14 @@ export function KeywordsContent() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      {kw.latestVisibilityScore !== null ? `${kw.latestVisibilityScore.toFixed(0)}%` : "—"}
+                      <div className="flex items-center justify-end gap-2">
+                        {optSummary?.byKeyword[kw.id]?.recommendations ? (
+                          <Badge variant="outline" className="text-xs text-amber-600 border-amber-200">
+                            {optSummary.byKeyword[kw.id].recommendations} tips
+                          </Badge>
+                        ) : null}
+                        {kw.latestVisibilityScore !== null ? `${kw.latestVisibilityScore.toFixed(0)}%` : "—"}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">

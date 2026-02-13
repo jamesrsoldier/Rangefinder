@@ -176,6 +176,12 @@ export const citationExtractor = inngest.createFunction(
       data: { projectId: context.project.id },
     });
 
+    // Step 4: Trigger optimization analysis (rule-based, runs after every scan)
+    await step.sendEvent('trigger-optimization', {
+      name: 'optimization/analyze',
+      data: { projectId: context.project.id, queryRunId, source: 'rule_based' },
+    });
+
     return {
       processedCount: context.results.length,
       projectId,

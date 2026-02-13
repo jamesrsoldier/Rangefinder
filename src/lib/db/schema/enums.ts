@@ -31,3 +31,36 @@ export const alertTypeEnum = pgEnum('alert_type', [
 export const alertChannelEnum = pgEnum('alert_channel', [
   'email', 'in_app'
 ]);
+
+// ============================================
+// OPTIMIZATION ENUMS
+// ============================================
+
+export const recommendationTypeEnum = pgEnum('recommendation_type', [
+  'create_content',
+  'update_content',
+  'add_schema',
+  'improve_structure',
+  'add_comparison',
+  'improve_authority',
+  'optimize_citations',
+]);
+
+export const recommendationStatusEnum = pgEnum('recommendation_status', [
+  'active',
+  'dismissed',
+  'completed',
+  'expired',
+]);
+
+export const recommendationPriorityEnum = pgEnum('recommendation_priority', [
+  'critical',
+  'high',
+  'medium',
+  'low',
+]);
+
+export const analysisSourceEnum = pgEnum('analysis_source', [
+  'rule_based',
+  'ai_powered',
+]);

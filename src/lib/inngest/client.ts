@@ -24,6 +24,13 @@ export type RangefinderEvents = {
   'analytics/sync.scheduled': {
     data: Record<string, never>;
   };
+  'optimization/analyze': {
+    data: {
+      projectId: string;
+      queryRunId: string;
+      source: 'rule_based' | 'ai_powered';
+    };
+  };
 };
 
 export const inngest = new Inngest({

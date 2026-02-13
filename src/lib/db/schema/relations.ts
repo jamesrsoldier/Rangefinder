@@ -16,6 +16,10 @@ import {
   gscData,
   alerts,
   alertEvents,
+  optimizationRecommendations,
+  contentGaps,
+  optimizationScores,
+  aiAnalysisRuns,
 } from './tables';
 
 // ============================================
@@ -67,6 +71,10 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   alertEvents: many(alertEvents),
   ga4TrafficData: many(ga4TrafficData),
   gscData: many(gscData),
+  optimizationRecommendations: many(optimizationRecommendations),
+  contentGaps: many(contentGaps),
+  optimizationScores: many(optimizationScores),
+  aiAnalysisRuns: many(aiAnalysisRuns),
 }));
 
 // ============================================
@@ -82,6 +90,9 @@ export const trackedKeywordsRelations = relations(trackedKeywords, ({ one, many 
   citations: many(citations),
   brandMentions: many(brandMentions),
   competitorCitations: many(competitorCitations),
+  optimizationRecommendations: many(optimizationRecommendations),
+  contentGaps: many(contentGaps),
+  optimizationScores: many(optimizationScores),
 }));
 
 export const queryRunsRelations = relations(queryRuns, ({ one, many }) => ({
@@ -154,6 +165,8 @@ export const competitorsRelations = relations(competitors, ({ one, many }) => ({
     references: [projects.id],
   }),
   competitorCitations: many(competitorCitations),
+  optimizationRecommendations: many(optimizationRecommendations),
+  contentGaps: many(contentGaps),
 }));
 
 export const competitorCitationsRelations = relations(competitorCitations, ({ one }) => ({
@@ -212,6 +225,66 @@ export const alertEventsRelations = relations(alertEvents, ({ one }) => ({
   }),
   project: one(projects, {
     fields: [alertEvents.projectId],
+    references: [projects.id],
+  }),
+}));
+
+// ============================================
+// OPTIMIZATION
+// ============================================
+
+export const optimizationRecommendationsRelations = relations(optimizationRecommendations, ({ one }) => ({
+  project: one(projects, {
+    fields: [optimizationRecommendations.projectId],
+    references: [projects.id],
+  }),
+  keyword: one(trackedKeywords, {
+    fields: [optimizationRecommendations.keywordId],
+    references: [trackedKeywords.id],
+  }),
+  competitor: one(competitors, {
+    fields: [optimizationRecommendations.competitorId],
+    references: [competitors.id],
+  }),
+  queryRun: one(queryRuns, {
+    fields: [optimizationRecommendations.queryRunId],
+    references: [queryRuns.id],
+  }),
+}));
+
+export const contentGapsRelations = relations(contentGaps, ({ one }) => ({
+  project: one(projects, {
+    fields: [contentGaps.projectId],
+    references: [projects.id],
+  }),
+  keyword: one(trackedKeywords, {
+    fields: [contentGaps.keywordId],
+    references: [trackedKeywords.id],
+  }),
+  competitor: one(competitors, {
+    fields: [contentGaps.competitorId],
+    references: [competitors.id],
+  }),
+}));
+
+export const optimizationScoresRelations = relations(optimizationScores, ({ one }) => ({
+  project: one(projects, {
+    fields: [optimizationScores.projectId],
+    references: [projects.id],
+  }),
+  keyword: one(trackedKeywords, {
+    fields: [optimizationScores.keywordId],
+    references: [trackedKeywords.id],
+  }),
+  queryRun: one(queryRuns, {
+    fields: [optimizationScores.queryRunId],
+    references: [queryRuns.id],
+  }),
+}));
+
+export const aiAnalysisRunsRelations = relations(aiAnalysisRuns, ({ one }) => ({
+  project: one(projects, {
+    fields: [aiAnalysisRuns.projectId],
     references: [projects.id],
   }),
 }));

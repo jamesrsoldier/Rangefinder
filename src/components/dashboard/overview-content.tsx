@@ -3,6 +3,7 @@
 import { useProject } from "@/hooks/use-project";
 import { useDateRange } from "@/hooks/use-date-range";
 import { useDashboardOverview } from "@/hooks/use-dashboard-data";
+import { useOptimizationScore } from "@/hooks/use-optimization-data";
 import { OverviewCards } from "./overview-cards";
 import { VisibilityChart } from "./visibility-chart";
 import { EngineBarChart } from "./engine-bar-chart";
@@ -11,12 +12,16 @@ import { AlertFeed } from "./alert-feed";
 import { DashboardSkeleton } from "@/components/shared/loading-skeleton";
 import { InlineError } from "@/components/shared/error-boundary";
 import { CreateProjectDialog } from "./create-project-dialog";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Target, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export function OverviewContent() {
   const { projectId, isLoading: projectLoading } = useProject();
   const { from, to } = useDateRange();
   const { data, isLoading, error, mutate } = useDashboardOverview(projectId, from, to);
+  const { data: optScore } = useOptimizationScore(projectId);
 
   if (projectLoading || isLoading) return <DashboardSkeleton />;
 
@@ -65,6 +70,36 @@ export function OverviewContent() {
         <TopPagesTable pages={data.topCitedPages} />
         <AlertFeed alerts={data.recentAlerts} />
       </div>
+
+      {/* Optimization Score Card */}
+      {optScore && optScore.overall > 0 && (
+        <Link href="/dashboard/optimize" className="block">
+          <Card className="hover:border-primary/50 transition-colors cursor-pointer">
+            <CardContent className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-muted p-2">
+                  <Target className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Optimization Score</p>
+                  <p className="text-xs text-muted-foreground">
+                    View recommendations to improve your visibility
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={cn(
+                  "text-2xl font-bold",
+                  optScore.overall >= 70 ? "text-emerald-600" : optScore.overall >= 40 ? "text-amber-600" : "text-red-600"
+                )}>
+                  {optScore.overall.toFixed(0)}
+                </span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      )}
     </div>
   );
 }

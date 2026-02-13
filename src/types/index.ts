@@ -12,6 +12,13 @@ export type AlertType = 'visibility_drop' | 'visibility_increase' | 'new_citatio
 export type AlertChannel = 'email' | 'in_app';
 export type OrgRole = 'owner' | 'admin' | 'member';
 
+// Optimization enums
+export type RecommendationType = 'create_content' | 'update_content' | 'add_schema' | 'improve_structure' | 'add_comparison' | 'improve_authority' | 'optimize_citations';
+export type RecommendationStatus = 'active' | 'dismissed' | 'completed' | 'expired';
+export type RecommendationPriority = 'critical' | 'high' | 'medium' | 'low';
+export type AnalysisSource = 'rule_based' | 'ai_powered';
+export type ContentGapType = 'no_brand_citation' | 'competitor_only' | 'stale_content' | 'low_prominence';
+
 // ============================================
 // PLAN LIMITS
 // ============================================
@@ -26,6 +33,8 @@ export interface PlanLimits {
   ga4Integration: boolean;
   gscIntegration: boolean;
   apiAccess: boolean;
+  aiPoweredOptimization: boolean;
+  aiAnalysisPerMonth: number;
 }
 
 export const PLAN_LIMITS: Record<SubscriptionTier, PlanLimits> = {
@@ -39,6 +48,8 @@ export const PLAN_LIMITS: Record<SubscriptionTier, PlanLimits> = {
     ga4Integration: false,
     gscIntegration: false,
     apiAccess: false,
+    aiPoweredOptimization: false,
+    aiAnalysisPerMonth: 0,
   },
   starter: {
     maxKeywords: 100,
@@ -50,6 +61,8 @@ export const PLAN_LIMITS: Record<SubscriptionTier, PlanLimits> = {
     ga4Integration: true,
     gscIntegration: false,
     apiAccess: false,
+    aiPoweredOptimization: true,
+    aiAnalysisPerMonth: 5,
   },
   growth: {
     maxKeywords: 500,
@@ -61,6 +74,8 @@ export const PLAN_LIMITS: Record<SubscriptionTier, PlanLimits> = {
     ga4Integration: true,
     gscIntegration: true,
     apiAccess: true,
+    aiPoweredOptimization: true,
+    aiAnalysisPerMonth: 50,
   },
 };
 
@@ -235,4 +250,67 @@ export interface ShareOfVoiceCalculation {
 export interface ProminenceScore {
   position: number | null;
   score: number;
+}
+
+// ============================================
+// OPTIMIZATION RESPONSE TYPES
+// ============================================
+
+export interface RecommendationResponse {
+  id: string;
+  type: RecommendationType;
+  priority: RecommendationPriority;
+  status: RecommendationStatus;
+  source: AnalysisSource;
+  title: string;
+  description: string;
+  actionableSteps: string[];
+  estimatedImpact: number;
+  keyword: string | null;
+  keywordId: string | null;
+  competitorName: string | null;
+  targetUrl: string | null;
+  createdAt: string;
+}
+
+export interface ContentGapResponse {
+  id: string;
+  keyword: string;
+  keywordId: string;
+  gapType: ContentGapType;
+  competitorName: string | null;
+  competitorUrl: string | null;
+  engineTypes: EngineType[];
+  severity: number;
+  source: AnalysisSource;
+  createdAt: string;
+}
+
+export interface ActionItemResponse {
+  id: string;
+  type: RecommendationType;
+  priority: RecommendationPriority;
+  title: string;
+  description: string;
+  estimatedImpact: number;
+  keyword: string | null;
+  competitorName: string | null;
+  source: AnalysisSource;
+  createdAt: string;
+}
+
+export interface OptimizationScoreResponse {
+  overall: number;
+  contentCoverage: number;
+  competitiveGap: number;
+  citationConsistency: number;
+  freshness: number;
+  trend: number;
+}
+
+export interface OptimizationSummaryResponse {
+  activeRecommendations: number;
+  criticalItems: number;
+  optimizationScore: number;
+  byKeyword: Record<string, { recommendations: number; hasContentGap: boolean }>;
 }

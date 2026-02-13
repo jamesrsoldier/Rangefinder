@@ -9,6 +9,7 @@ import {
   Users,
   BarChart3,
   Tags,
+  Lightbulb,
   Settings,
   CreditCard,
   Link2,
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/dashboard/competitors", label: "Competitors", icon: Users },
   { href: "/dashboard/traffic", label: "Traffic", icon: BarChart3 },
   { href: "/dashboard/keywords", label: "Keywords", icon: Tags },
+  { href: "/dashboard/optimize", label: "Optimize", icon: Lightbulb },
 ];
 
 const settingsItems = [

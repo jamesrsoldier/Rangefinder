@@ -21,6 +21,10 @@ import {
   sentimentTypeEnum,
   alertTypeEnum,
   alertChannelEnum,
+  recommendationTypeEnum,
+  recommendationStatusEnum,
+  recommendationPriorityEnum,
+  analysisSourceEnum,
 } from './enums';
 
 // ============================================
@@ -261,4 +265,83 @@ export const alertEvents = pgTable('alert_events', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (table) => ({
   idxProjectRead: index('idx_alertevents_project_read').on(table.projectId, table.isRead),
+}));
+
+// ============================================
+// OPTIMIZATION
+// ============================================
+
+export const optimizationRecommendations = pgTable('optimization_recommendations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  keywordId: uuid('keyword_id').references(() => trackedKeywords.id, { onDelete: 'set null' }),
+  type: recommendationTypeEnum('type').notNull(),
+  priority: recommendationPriorityEnum('priority').notNull().default('medium'),
+  status: recommendationStatusEnum('status').notNull().default('active'),
+  source: analysisSourceEnum('source').notNull().default('rule_based'),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  actionableSteps: jsonb('actionable_steps').$type<string[]>(),
+  estimatedImpact: real('estimated_impact'),
+  targetUrl: text('target_url'),
+  competitorId: uuid('competitor_id').references(() => competitors.id, { onDelete: 'set null' }),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+  queryRunId: uuid('query_run_id').references(() => queryRuns.id, { onDelete: 'set null' }),
+  dismissedAt: timestamp('dismissed_at', { withTimezone: true }),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  idxProjectStatus: index('idx_opt_recs_project_status').on(table.projectId, table.status),
+  idxProjectPriority: index('idx_opt_recs_project_priority').on(table.projectId, table.priority),
+  idxProjectKeyword: index('idx_opt_recs_project_keyword').on(table.projectId, table.keywordId),
+}));
+
+export const contentGaps = pgTable('content_gaps', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  keywordId: uuid('keyword_id').notNull().references(() => trackedKeywords.id, { onDelete: 'cascade' }),
+  gapType: text('gap_type').notNull(),
+  competitorId: uuid('competitor_id').references(() => competitors.id, { onDelete: 'set null' }),
+  competitorUrl: text('competitor_url'),
+  brandLastCitedAt: timestamp('brand_last_cited_at', { withTimezone: true }),
+  engineTypes: engineTypeEnum('engine_types').array(),
+  severity: real('severity').notNull().default(0.5),
+  source: analysisSourceEnum('source').notNull().default('rule_based'),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  idxProjectGapType: index('idx_content_gaps_project_type').on(table.projectId, table.gapType),
+  uniqueGap: unique().on(table.projectId, table.keywordId, table.gapType, table.competitorId),
+}));
+
+export const optimizationScores = pgTable('optimization_scores', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  keywordId: uuid('keyword_id').references(() => trackedKeywords.id, { onDelete: 'cascade' }),
+  overallScore: real('overall_score').notNull().default(0),
+  contentCoverage: real('content_coverage').notNull().default(0),
+  competitiveGap: real('competitive_gap').notNull().default(0),
+  citationConsistency: real('citation_consistency').notNull().default(0),
+  freshness: real('freshness').notNull().default(0),
+  queryRunId: uuid('query_run_id').references(() => queryRuns.id, { onDelete: 'set null' }),
+  calculatedAt: timestamp('calculated_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  idxProjectScore: index('idx_opt_scores_project').on(table.projectId),
+}));
+
+export const aiAnalysisRuns = pgTable('ai_analysis_runs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  status: queryRunStatusEnum('status').notNull().default('pending'),
+  keywordsAnalyzed: integer('keywords_analyzed').notNull().default(0),
+  recommendationsGenerated: integer('recommendations_generated').notNull().default(0),
+  tokensUsed: integer('tokens_used'),
+  startedAt: timestamp('started_at', { withTimezone: true }),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  idxProjectCreated: index('idx_ai_analysis_project_created').on(table.projectId, table.createdAt),
 }));

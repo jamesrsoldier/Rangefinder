@@ -6,6 +6,7 @@ import {
   citationExtractor,
   analyticsSync,
   alertEvaluator,
+  optimizationAnalyzer,
 } from '@/lib/inngest';
 
 export const { GET, POST, PUT } = serve({
@@ -16,5 +17,6 @@ export const { GET, POST, PUT } = serve({
     citationExtractor,
     analyticsSync,
     alertEvaluator,
+    optimizationAnalyzer,
   ],
 });
