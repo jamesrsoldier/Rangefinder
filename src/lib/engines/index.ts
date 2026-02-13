@@ -21,7 +21,7 @@ const adapters: Partial<Record<EngineType, () => EngineAdapter>> = {
  * Remove USE_MOCK_ENGINE to switch to real engines.
  */
 export function getAdapter(engineType: EngineType): EngineAdapter {
-  if (process.env.USE_MOCK_ENGINE === 'true') {
+  if (process.env.USE_MOCK_ENGINE === 'true' && process.env.NODE_ENV !== 'production') {
     return new MockAdapter(engineType);
   }
 
@@ -33,7 +33,7 @@ export function getAdapter(engineType: EngineType): EngineAdapter {
 }
 
 export function getAvailableEngines(): EngineType[] {
-  if (process.env.USE_MOCK_ENGINE === 'true') {
+  if (process.env.USE_MOCK_ENGINE === 'true' && process.env.NODE_ENV !== 'production') {
     return ['perplexity', 'google_ai_overview', 'chatgpt', 'bing_copilot', 'claude'];
   }
   return Object.keys(adapters) as EngineType[];

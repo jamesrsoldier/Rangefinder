@@ -1,6 +1,26 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/admin(.*)",
+]);
+
+const isProtectedApi = createRouteMatcher([
+  "/api/projects(.*)",
+  "/api/admin(.*)",
+  "/api/billing(.*)",
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  // Skip auth enforcement in mock mode (local dev only, blocked in production)
+  if (process.env.USE_MOCK_ENGINE === "true" && process.env.NODE_ENV !== "production") {
+    return;
+  }
+
+  if (isProtectedRoute(req) || isProtectedApi(req)) {
+    await auth.protect();
+  }
+});
 
 export const config = {
   matcher: [

@@ -2,7 +2,8 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-const isMockMode = process.env.USE_MOCK_ENGINE === 'true';
+// Mock mode is only allowed in non-production environments
+const isMockMode = process.env.USE_MOCK_ENGINE === 'true' && process.env.NODE_ENV !== 'production';
 
 // Use globalThis to persist across HMR reloads in dev mode
 const g = globalThis as unknown as {

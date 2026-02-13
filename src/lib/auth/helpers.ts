@@ -7,7 +7,8 @@ import {
   projects,
 } from '@/lib/db/schema';
 
-const isMockMode = process.env.USE_MOCK_ENGINE === 'true';
+// Mock mode is only allowed in non-production environments
+const isMockMode = process.env.USE_MOCK_ENGINE === 'true' && process.env.NODE_ENV !== 'production';
 const MOCK_CLERK_ID = 'mock_clerk_user_001';
 
 export interface AuthUser {
