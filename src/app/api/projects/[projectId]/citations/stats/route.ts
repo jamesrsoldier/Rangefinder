@@ -3,6 +3,7 @@ import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { citations, trackedKeywords } from '@/lib/db/schema';
 import { requireProjectAccess, handleAuthError } from '@/lib/auth/helpers';
+import { endOfDateRange } from '@/lib/utils';
 
 export async function GET(
   request: NextRequest,
@@ -22,7 +23,7 @@ export async function GET(
       conditions.push(gte(citations.createdAt, new Date(from)));
     }
     if (to) {
-      conditions.push(lte(citations.createdAt, new Date(to + 'T23:59:59.999Z')));
+      conditions.push(lte(citations.createdAt, endOfDateRange(to)));
     }
     const whereClause = and(...conditions);
 

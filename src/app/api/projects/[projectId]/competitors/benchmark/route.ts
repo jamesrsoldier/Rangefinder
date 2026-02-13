@@ -8,6 +8,7 @@ import {
   trackedKeywords,
 } from '@/lib/db/schema';
 import { requireProjectAccess, handleAuthError } from '@/lib/auth/helpers';
+import { endOfDateRange } from '@/lib/utils';
 
 export async function GET(
   request: NextRequest,
@@ -38,7 +39,7 @@ export async function GET(
       dateConditions.push(gte(competitorCitations.createdAt, new Date(from)));
     }
     if (to) {
-      dateConditions.push(lte(competitorCitations.createdAt, new Date(to + 'T23:59:59.999Z')));
+      dateConditions.push(lte(competitorCitations.createdAt, endOfDateRange(to)));
     }
 
     // Get brand citation count for share-of-voice calculation
@@ -47,7 +48,7 @@ export async function GET(
       brandDateConditions.push(gte(citations.createdAt, new Date(from)));
     }
     if (to) {
-      brandDateConditions.push(lte(citations.createdAt, new Date(to + 'T23:59:59.999Z')));
+      brandDateConditions.push(lte(citations.createdAt, endOfDateRange(to)));
     }
 
     const [brandCitationResult] = await db

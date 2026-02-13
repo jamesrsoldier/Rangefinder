@@ -17,7 +17,7 @@ import {
   calculateTrend,
   type EngineVisibilityInput,
 } from '@/lib/citations/scoring';
-import { daysAgo, dateToString } from '@/lib/utils';
+import { daysAgo, dateToString, endOfDateRange } from '@/lib/utils';
 import type { DashboardOverview, EngineType, AlertEventResponse } from '@/types';
 
 export async function GET(
@@ -65,7 +65,7 @@ export async function GET(
           eq(citations.projectId, projectId),
           eq(citations.isBrandCitation, true),
           gte(citations.createdAt, new Date(fromDate)),
-          lte(citations.createdAt, new Date(toDate + 'T23:59:59Z'))
+          lte(citations.createdAt, endOfDateRange(toDate))
         )
       );
 
@@ -127,7 +127,7 @@ export async function GET(
           eq(citations.projectId, projectId),
           eq(citations.isBrandCitation, true),
           gte(citations.createdAt, new Date(fromDate)),
-          lte(citations.createdAt, new Date(toDate + 'T23:59:59Z'))
+          lte(citations.createdAt, endOfDateRange(toDate))
         )
       );
 
@@ -141,7 +141,7 @@ export async function GET(
         and(
           eq(competitorCitations.projectId, projectId),
           gte(competitorCitations.createdAt, new Date(fromDate)),
-          lte(competitorCitations.createdAt, new Date(toDate + 'T23:59:59Z'))
+          lte(competitorCitations.createdAt, endOfDateRange(toDate))
         )
       )
       .groupBy(competitorCitations.competitorId);
@@ -206,7 +206,7 @@ export async function GET(
           eq(citations.projectId, projectId),
           eq(citations.isBrandCitation, true),
           gte(citations.createdAt, new Date(fromDate)),
-          lte(citations.createdAt, new Date(toDate + 'T23:59:59Z'))
+          lte(citations.createdAt, endOfDateRange(toDate))
         )
       )
       .groupBy(sql`date(${citations.createdAt})`);
@@ -235,7 +235,7 @@ export async function GET(
           eq(citations.projectId, projectId),
           eq(citations.isBrandCitation, true),
           gte(citations.createdAt, new Date(fromDate)),
-          lte(citations.createdAt, new Date(toDate + 'T23:59:59Z'))
+          lte(citations.createdAt, endOfDateRange(toDate))
         )
       )
       .groupBy(citations.citedUrl)
@@ -312,7 +312,7 @@ async function getVisibilityDataForPeriod(
         eq(citations.projectId, projectId),
         eq(citations.isBrandCitation, true),
         gte(citations.createdAt, new Date(fromDate)),
-        lte(citations.createdAt, new Date(toDate + 'T23:59:59Z'))
+        lte(citations.createdAt, endOfDateRange(toDate))
       )
     )
     .groupBy(citations.engineType);
@@ -327,7 +327,7 @@ async function getVisibilityDataForPeriod(
       and(
         eq(queryResults.projectId, projectId),
         gte(queryResults.createdAt, new Date(fromDate)),
-        lte(queryResults.createdAt, new Date(toDate + 'T23:59:59Z'))
+        lte(queryResults.createdAt, endOfDateRange(toDate))
       )
     )
     .groupBy(queryResults.engineType);

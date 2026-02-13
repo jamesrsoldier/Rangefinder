@@ -8,7 +8,7 @@ import {
 } from '@/lib/db/schema';
 import { requireProjectAccess, handleAuthError } from '@/lib/auth/helpers';
 import { calculateCitationConfidence, calculateTrend } from '@/lib/citations/scoring';
-import { daysAgo, dateToString } from '@/lib/utils';
+import { daysAgo, dateToString, endOfDateRange } from '@/lib/utils';
 import type { VisibilityByKeyword, EngineType } from '@/types';
 
 const ENGINE_WEIGHTS: Record<EngineType, number> = {
@@ -56,7 +56,7 @@ export async function GET(
           eq(queryResults.keywordId, trackedKeywords.id),
           eq(queryResults.projectId, projectId),
           gte(queryResults.createdAt, new Date(fromDate)),
-          lte(queryResults.createdAt, new Date(toDate + 'T23:59:59Z'))
+          lte(queryResults.createdAt, endOfDateRange(toDate))
         )
       )
       .leftJoin(
