@@ -66,9 +66,10 @@ export function calculateVisibilityScore(
   }
 
   // Distinguish input shape at runtime.
-  // VisibilityInput always carries an `engine` field; EngineVisibilityInput does not.
+  // VisibilityInput has `keywordsWithBrandCitation`; EngineVisibilityInput has `keywordsCited`.
+  // Both may have `engine`, so we use a field unique to the original shape.
   const isOriginalInput = (item: VisibilityInput | EngineVisibilityInput): item is VisibilityInput =>
-    'engine' in item;
+    'keywordsWithBrandCitation' in item;
 
   if (isOriginalInput(inputs[0])) {
     // ---------- Original NSDi3 path ----------
