@@ -16,8 +16,8 @@ export function TrendIndicator({ value, suffix = "%", className }: TrendIndicato
     <span
       className={cn(
         "inline-flex items-center gap-1 text-xs font-medium",
-        isPositive && "text-emerald-600",
-        !isPositive && !isNeutral && "text-red-600",
+        isPositive && "text-success",
+        !isPositive && !isNeutral && "text-error",
         isNeutral && "text-muted-foreground",
         className
       )}

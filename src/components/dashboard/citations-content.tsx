@@ -16,6 +16,7 @@ import { TableSkeleton } from "@/components/shared/loading-skeleton";
 import { InlineError } from "@/components/shared/error-boundary";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ALL_ENGINES, ENGINE_LABELS } from "@/lib/constants";
+import { chartTooltipStyle, chartGridProps, chartAxisTickStyle } from "@/lib/chart-theme";
 
 const PAGE_SIZE = 20;
 
@@ -112,7 +113,7 @@ export function CitationsContent() {
                       <TableCell className="text-center">{c.position ? `#${c.position}` : "—"}</TableCell>
                       <TableCell className="text-center">
                         {c.isBrandCitation ? (
-                          <Check className="h-4 w-4 text-emerald-500 inline" />
+                          <Check className="h-4 w-4 text-success inline" />
                         ) : (
                           <X className="h-4 w-4 text-muted-foreground inline" />
                         )}
@@ -155,13 +156,13 @@ export function CitationsContent() {
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={stats.overTime.map((d) => ({ ...d, dateLabel: format(new Date(d.date + "T00:00:00"), "MMM d") }))}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }} />
+                  <CartesianGrid {...chartGridProps} />
+                  <XAxis dataKey="dateLabel" tick={chartAxisTickStyle} />
+                  <YAxis tick={chartAxisTickStyle} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
                   <Legend />
                   <Line type="monotone" dataKey="total" name="Total" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="brand" name="Brand" stroke="#10A37F" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="brand" name="Brand" stroke="hsl(var(--success))" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>

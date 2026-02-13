@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils";
 import type { AlertEventResponse, AlertType } from "@/types";
 
 const alertIcons: Record<AlertType, React.ReactNode> = {
-  visibility_drop: <TrendingDown className="h-4 w-4 text-red-500" />,
-  visibility_increase: <TrendingUp className="h-4 w-4 text-emerald-500" />,
-  new_citation: <Plus className="h-4 w-4 text-emerald-500" />,
-  lost_citation: <Minus className="h-4 w-4 text-red-500" />,
-  competitor_change: <Users className="h-4 w-4 text-amber-500" />,
-  negative_sentiment: <MessageSquare className="h-4 w-4 text-red-500" />,
+  visibility_drop: <TrendingDown className="h-4 w-4 text-error" />,
+  visibility_increase: <TrendingUp className="h-4 w-4 text-success" />,
+  new_citation: <Plus className="h-4 w-4 text-success" />,
+  lost_citation: <Minus className="h-4 w-4 text-error" />,
+  competitor_change: <Users className="h-4 w-4 text-warning" />,
+  negative_sentiment: <MessageSquare className="h-4 w-4 text-error" />,
 };
 
 interface AlertFeedProps {

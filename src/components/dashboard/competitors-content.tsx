@@ -17,7 +17,7 @@ import { InlineError } from "@/components/shared/error-boundary";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Check, X } from "lucide-react";
 
-const COLORS = ["hsl(var(--primary))", "#ef4444", "#f97316", "#3b82f6", "#8b5cf6", "#06b6d4", "#84cc16"];
+const COLORS = ["hsl(var(--primary))", "hsl(var(--error))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))", "hsl(var(--chart-6))", "hsl(var(--chart-7))"];
 
 export function CompetitorsContent() {
   const { projectId, project, isLoading: projectLoading } = useProject();
@@ -204,7 +204,7 @@ export function CompetitorsContent() {
                         <TableCell className="font-medium">{kw.keyword}</TableCell>
                         <TableCell className="text-center">
                           {kw.cited ? (
-                            <Check className="h-4 w-4 text-emerald-500 inline" />
+                            <Check className="h-4 w-4 text-success inline" />
                           ) : (
                             <X className="h-4 w-4 text-muted-foreground inline" />
                           )}
@@ -214,7 +214,7 @@ export function CompetitorsContent() {
                           return (
                             <TableCell key={b.competitorId} className="text-center">
                               {compKw?.cited ? (
-                                <Check className="h-4 w-4 text-emerald-500 inline" />
+                                <Check className="h-4 w-4 text-success inline" />
                               ) : (
                                 <X className="h-4 w-4 text-muted-foreground inline" />
                               )}

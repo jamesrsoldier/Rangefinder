@@ -50,7 +50,7 @@ function ScanStatusBadge({ status }: { status: string }) {
       );
     case "completed":
       return (
-        <Badge variant="secondary" className="gap-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+        <Badge variant="secondary" className="gap-1 bg-success-muted text-success-muted-foreground">
           <CheckCircle2 className="h-3 w-3" />
           Completed
         </Badge>
@@ -64,7 +64,7 @@ function ScanStatusBadge({ status }: { status: string }) {
       );
     case "partial":
       return (
-        <Badge variant="secondary" className="gap-1 bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+        <Badge variant="secondary" className="gap-1 bg-warning-muted text-warning-muted-foreground">
           <CheckCircle2 className="h-3 w-3" />
           Partial
         </Badge>
@@ -299,7 +299,7 @@ export function KeywordsContent() {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         {optSummary?.byKeyword[kw.id]?.recommendations ? (
-                          <Badge variant="outline" className="text-xs text-amber-600 border-amber-200">
+                          <Badge variant="outline" className="text-xs text-warning border-warning/20">
                             {optSummary.byKeyword[kw.id].recommendations} tips
                           </Badge>
                         ) : null}

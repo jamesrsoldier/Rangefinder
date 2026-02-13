@@ -152,7 +152,7 @@ export function OptimizeContent() {
             {aiTriggering ? "Analyzing..." : "Run AI Analysis"}
           </Button>
           {aiError && (
-            <Badge variant="outline" className="text-xs text-red-600 border-red-200">
+            <Badge variant="outline" className="text-xs text-error border-error/20">
               {aiError.includes("Starter") ? (
                 <span className="flex items-center gap-1">
                   <Lock className="h-3 w-3" />

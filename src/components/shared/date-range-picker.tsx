@@ -77,7 +77,7 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
               type="date"
               value={from}
               onChange={(e) => onChange(e.target.value, to)}
-              className="rounded border px-2 py-1 text-sm"
+              className="rounded border border-input bg-background text-foreground px-2 py-1 text-sm"
             />
           </div>
           <div className="mt-2 flex items-center gap-2 text-sm">
@@ -86,7 +86,7 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
               type="date"
               value={to}
               onChange={(e) => onChange(from, e.target.value)}
-              className="ml-4 rounded border px-2 py-1 text-sm"
+              className="ml-4 rounded border border-input bg-background text-foreground px-2 py-1 text-sm"
             />
           </div>
         </div>

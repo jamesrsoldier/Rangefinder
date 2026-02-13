@@ -74,7 +74,7 @@ export function OverviewContent() {
       {/* Optimization Score Card */}
       {optScore && optScore.overall > 0 && (
         <Link href="/dashboard/optimize" className="block">
-          <Card className="hover:border-primary/50 transition-colors cursor-pointer">
+          <Card className="hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 transition-all cursor-pointer">
             <CardContent className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <div className="rounded-full bg-muted p-2">
@@ -90,7 +90,7 @@ export function OverviewContent() {
               <div className="flex items-center gap-3">
                 <span className={cn(
                   "text-2xl font-bold",
-                  optScore.overall >= 70 ? "text-emerald-600" : optScore.overall >= 40 ? "text-amber-600" : "text-red-600"
+                  optScore.overall >= 70 ? "text-success" : optScore.overall >= 40 ? "text-warning" : "text-error"
                 )}>
                   {optScore.overall.toFixed(0)}
                 </span>

@@ -4,48 +4,118 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Mission Control — Light Mode */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 238.7 83.5% 66.7%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 238.7 83.5% 66.7%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
     --radius: 0.5rem;
+
+    /* Status — Light */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 152 76% 94%;
+    --success-muted-foreground: 163 94% 24%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-muted: 48 96% 89%;
+    --warning-muted-foreground: 32 95% 44%;
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 100%;
+    --error-muted: 0 93% 94%;
+    --error-muted-foreground: 0 74% 42%;
+
+    /* Engine brand colors */
+    --engine-perplexity: 187 63% 34%;
+    --engine-google: 217 89% 61%;
+    --engine-chatgpt: 160 83% 35%;
+    --engine-bing: 194 100% 49%;
+    --engine-claude: 38 86% 44%;
+
+    /* Chart palette */
+    --chart-1: 217 91% 60%;
+    --chart-2: 0 84% 60%;
+    --chart-3: 25 95% 53%;
+    --chart-4: 199 89% 48%;
+    --chart-5: 258 90% 66%;
+    --chart-6: 187 80% 42%;
+    --chart-7: 84 81% 44%;
+
+    /* Special accents */
+    --ai-accent: 258 90% 66%;
+    --impact-positive: 160 84% 39%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Mission Control — Dark Mode */
+    --background: 222 60% 9%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+
+    /* Status — Dark */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 160 30% 15%;
+    --success-muted-foreground: 160 84% 60%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-muted: 38 30% 15%;
+    --warning-muted-foreground: 38 92% 60%;
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 100%;
+    --error-muted: 0 30% 15%;
+    --error-muted-foreground: 0 84% 65%;
+
+    /* Engine brand colors (same in both modes) */
+    --engine-perplexity: 187 63% 34%;
+    --engine-google: 217 89% 61%;
+    --engine-chatgpt: 160 83% 35%;
+    --engine-bing: 194 100% 49%;
+    --engine-claude: 38 86% 44%;
+
+    /* Chart palette */
+    --chart-1: 217 91% 60%;
+    --chart-2: 0 84% 60%;
+    --chart-3: 25 95% 53%;
+    --chart-4: 199 89% 48%;
+    --chart-5: 258 90% 66%;
+    --chart-6: 187 80% 42%;
+    --chart-7: 84 81% 44%;
+
+    /* Special accents */
+    --ai-accent: 258 90% 66%;
+    --impact-positive: 160 84% 60%;
   }
 }
 
@@ -55,5 +125,13 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Subtle top glow in dark mode for Mission Control feel */
+  .dark body {
+    background-image: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      hsl(var(--primary) / 0.04) 0%,
+      transparent 50%
+    );
   }
 }

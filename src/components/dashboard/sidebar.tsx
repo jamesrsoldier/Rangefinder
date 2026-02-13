@@ -45,17 +45,18 @@ export function Sidebar() {
   const isAdmin = adminCheck?.isAdmin === true;
 
   return (
-    <aside className="hidden md:flex h-full w-64 flex-col border-r bg-background">
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
+    <aside className="hidden md:flex h-full w-56 flex-col border-r bg-card">
+      <div className="flex h-16 items-center border-b px-5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" />
+        <Link href="/dashboard" className="relative flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-sm font-bold text-primary-foreground">R</span>
           </div>
-          <span className="text-lg font-semibold">Rangefinder</span>
+          <span className="text-lg font-semibold tracking-tight">Rangefinder</span>
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-0.5 p-3">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -63,10 +64,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ? "bg-primary/5 text-primary border-l-2 border-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground border-l-2 border-transparent"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -75,7 +76,7 @@ export function Sidebar() {
           );
         })}
 
-        <div className="my-4">
+        <div className="my-3">
           <div className="h-px bg-border" />
         </div>
 
@@ -86,10 +87,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ? "bg-primary/5 text-primary border-l-2 border-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground border-l-2 border-transparent"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -100,12 +101,12 @@ export function Sidebar() {
 
         {isAdmin && (
           <>
-            <div className="my-4">
+            <div className="my-3">
               <div className="h-px bg-border" />
             </div>
             <Link
               href="/admin"
-              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+              className="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors border-l-2 border-transparent"
             >
               <ShieldCheck className="h-4 w-4" />
               Admin Panel

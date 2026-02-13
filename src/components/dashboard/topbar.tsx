@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/shared/date-range-picker";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useProject } from "@/hooks/use-project";
 import { useDateRange } from "@/hooks/use-date-range";
 import { useAlertEvents } from "@/hooks/use-dashboard-data";
@@ -60,6 +61,7 @@ export function Topbar() {
             </span>
           )}
         </Button>
+        <ThemeToggle />
         <UserButton afterSignOutUrl="/" />
       </div>
     </header>

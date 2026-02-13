@@ -15,14 +15,15 @@ import { DashboardSkeleton } from "@/components/shared/loading-skeleton";
 import { InlineError } from "@/components/shared/error-boundary";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatNumber } from "@/lib/utils";
+import { chartTooltipStyle, chartGridProps, chartAxisTickStyle } from "@/lib/chart-theme";
 
 const SOURCE_COLORS: Record<string, string> = {
-  "chatgpt.com": "#10A37F",
-  "perplexity.ai": "#20808D",
-  "claude.ai": "#D97706",
-  "you.com": "#8b5cf6",
-  "phind.com": "#06b6d4",
-  "copilot.microsoft.com": "#00BCF2",
+  "chatgpt.com": "hsl(var(--engine-chatgpt))",
+  "perplexity.ai": "hsl(var(--engine-perplexity))",
+  "claude.ai": "hsl(var(--engine-claude))",
+  "you.com": "hsl(var(--chart-5))",
+  "phind.com": "hsl(var(--chart-6))",
+  "copilot.microsoft.com": "hsl(var(--engine-bing))",
 };
 
 export function TrafficContent() {
@@ -82,10 +83,10 @@ export function TrafficContent() {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }} />
+                <CartesianGrid {...chartGridProps} />
+                <XAxis dataKey="dateLabel" tick={chartAxisTickStyle} />
+                <YAxis tick={chartAxisTickStyle} />
+                <Tooltip contentStyle={chartTooltipStyle} />
                 <Legend />
                 <Area type="monotone" dataKey="sessions" name="Sessions" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
               </AreaChart>
@@ -103,9 +104,9 @@ export function TrafficContent() {
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.bySource} layout="vertical" margin={{ left: 20 }}>
-                  <XAxis type="number" tick={{ fontSize: 12 }} />
-                  <YAxis type="category" dataKey="source" width={120} tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }} />
+                  <XAxis type="number" tick={chartAxisTickStyle} />
+                  <YAxis type="category" dataKey="source" width={120} tick={chartAxisTickStyle} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
                   <Bar dataKey="sessions" radius={[0, 4, 4, 0]}>
                     {data.bySource.map((entry) => (
                       <Cell key={entry.source} fill={SOURCE_COLORS[entry.source] || "hsl(var(--primary))"} />

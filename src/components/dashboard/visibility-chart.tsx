@@ -2,6 +2,7 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { chartTooltipStyle, chartGridProps, chartAxisTickStyle } from "@/lib/chart-theme";
 import { format } from "date-fns";
 
 interface VisibilityChartProps {
@@ -23,11 +24,11 @@ export function VisibilityChart({ data }: VisibilityChartProps) {
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={formatted}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis dataKey="dateLabel" className="text-xs" tick={{ fontSize: 12 }} />
-              <YAxis domain={[0, 100]} className="text-xs" tick={{ fontSize: 12 }} />
+              <CartesianGrid {...chartGridProps} />
+              <XAxis dataKey="dateLabel" tick={chartAxisTickStyle} />
+              <YAxis domain={[0, 100]} tick={chartAxisTickStyle} />
               <Tooltip
-                contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
+                contentStyle={chartTooltipStyle}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 formatter={(value: any) => [`${Number(value).toFixed(1)}`, "Score"]}
               />

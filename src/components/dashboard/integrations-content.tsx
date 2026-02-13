@@ -45,7 +45,7 @@ export function IntegrationsContent() {
               <CardDescription className="mt-1">Track AI referral traffic and conversions</CardDescription>
             </div>
             {project.ga4Connected ? (
-              <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-200">
+              <Badge variant="default" className="bg-success-muted text-success-muted-foreground border-success/20">
                 <Check className="mr-1 h-3 w-3" />
                 Connected
               </Badge>
@@ -87,7 +87,7 @@ export function IntegrationsContent() {
               <CardDescription className="mt-1">Monitor search performance alongside AI visibility</CardDescription>
             </div>
             {project.gscConnected ? (
-              <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-200">
+              <Badge variant="default" className="bg-success-muted text-success-muted-foreground border-success/20">
                 <Check className="mr-1 h-3 w-3" />
                 Connected
               </Badge>

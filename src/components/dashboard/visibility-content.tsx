@@ -115,7 +115,7 @@ function KeywordRow({
           <div className="flex items-center justify-end gap-2">
             <div className="h-2 w-16 rounded-full bg-muted overflow-hidden">
               <div
-                className={cn("h-full rounded-full", kw.confidence >= 60 ? "bg-emerald-500" : kw.confidence >= 30 ? "bg-amber-500" : "bg-red-500")}
+                className={cn("h-full rounded-full", kw.confidence >= 60 ? "bg-success" : kw.confidence >= 30 ? "bg-warning" : "bg-error")}
                 style={{ width: `${kw.confidence}%` }}
               />
             </div>

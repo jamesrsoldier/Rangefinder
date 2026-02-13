@@ -10,17 +10,21 @@ interface MetricCardProps {
   value: string;
   trend: number;
   icon: React.ReactNode;
+  index: number;
 }
 
-function MetricCard({ title, value, trend, icon }: MetricCardProps) {
+function MetricCard({ title, value, trend, icon, index }: MetricCardProps) {
   return (
-    <Card>
+    <Card
+      className="border-l-2 border-l-primary/20 opacity-0 animate-fade-in"
+      style={{ animationDelay: `${index * 75}ms` }}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <div className="text-muted-foreground">{icon}</div>
+        <div className="text-primary/70">{icon}</div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-3xl font-bold tracking-tight">{value}</div>
         <TrendIndicator value={trend} className="mt-1" />
       </CardContent>
     </Card>
@@ -55,24 +59,28 @@ export function OverviewCards({
         value={visibilityScore.toFixed(1)}
         trend={visibilityTrend}
         icon={<Eye className="h-4 w-4" />}
+        index={0}
       />
       <MetricCard
         title="Total Citations"
         value={formatNumber(totalCitations)}
         trend={citationsTrend}
         icon={<Quote className="h-4 w-4" />}
+        index={1}
       />
       <MetricCard
         title="AI Sessions"
         value={formatNumber(aiReferralSessions)}
         trend={sessionsTrend}
         icon={<BarChart3 className="h-4 w-4" />}
+        index={2}
       />
       <MetricCard
         title="Share of Voice"
         value={`${shareOfVoice.toFixed(0)}%`}
         trend={shareOfVoiceTrend}
         icon={<PieChart className="h-4 w-4" />}
+        index={3}
       />
     </div>
   );

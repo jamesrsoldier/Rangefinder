@@ -43,10 +43,10 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  critical: "bg-red-100 text-red-700 border-red-200",
-  high: "bg-orange-100 text-orange-700 border-orange-200",
-  medium: "bg-amber-100 text-amber-700 border-amber-200",
-  low: "bg-slate-100 text-slate-600 border-slate-200",
+  critical: "bg-error-muted text-error-muted-foreground border-error/20",
+  high: "bg-warning-muted text-warning-muted-foreground border-warning/20",
+  medium: "bg-warning-muted text-warning-muted-foreground border-warning/20",
+  low: "bg-muted text-muted-foreground border-border",
 };
 
 interface RecommendationCardProps {
@@ -82,12 +82,12 @@ export function RecommendationCard({
                 {TYPE_LABELS[rec.type] ?? rec.type}
               </Badge>
               {rec.source === "ai_powered" ? (
-                <Sparkles className="h-3.5 w-3.5 text-purple-500" />
+                <Sparkles className="h-3.5 w-3.5 text-ai-accent" />
               ) : (
                 <Cpu className="h-3.5 w-3.5 text-muted-foreground" />
               )}
               {(rec.estimatedImpact ?? 0) > 0 && (
-                <span className="text-xs font-medium text-emerald-600">
+                <span className="text-xs font-medium text-impact-positive">
                   +{(rec.estimatedImpact ?? 0).toFixed(0)}% impact
                 </span>
               )}
@@ -130,7 +130,7 @@ export function RecommendationCard({
               disabled={isUpdating}
               title="Mark complete"
             >
-              <Check className="h-3.5 w-3.5 text-emerald-600" />
+              <Check className="h-3.5 w-3.5 text-success" />
             </Button>
             <Button
               size="icon"

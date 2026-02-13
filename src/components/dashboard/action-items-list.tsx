@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 import type { ActionItemResponse } from "@/types";
 
 const PRIORITY_CONFIG: Record<string, { label: string; className: string }> = {
-  critical: { label: "Critical", className: "bg-red-100 text-red-700 border-red-200" },
-  high: { label: "High", className: "bg-orange-100 text-orange-700 border-orange-200" },
-  medium: { label: "Medium", className: "bg-amber-100 text-amber-700 border-amber-200" },
-  low: { label: "Low", className: "bg-slate-100 text-slate-600 border-slate-200" },
+  critical: { label: "Critical", className: "bg-error-muted text-error-muted-foreground border-error/20" },
+  high: { label: "High", className: "bg-warning-muted text-warning-muted-foreground border-warning/20" },
+  medium: { label: "Medium", className: "bg-warning-muted text-warning-muted-foreground border-warning/20" },
+  low: { label: "Low", className: "bg-muted text-muted-foreground border-border" },
 };
 
 interface ActionItemsListProps {
@@ -92,13 +92,13 @@ export function ActionItemsList({ items, onDismiss, onComplete, isUpdating }: Ac
                     {item.keyword ?? "—"}
                   </TableCell>
                   <TableCell className="text-right">
-                    <span className="text-sm font-medium text-emerald-600">
+                    <span className="text-sm font-medium text-impact-positive">
                       +{(item.estimatedImpact ?? 0).toFixed(0)}%
                     </span>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {item.source === "ai_powered" ? (
-                      <Sparkles className="h-3.5 w-3.5 text-purple-500" />
+                      <Sparkles className="h-3.5 w-3.5 text-ai-accent" />
                     ) : (
                       <Cpu className="h-3.5 w-3.5 text-muted-foreground" />
                     )}
@@ -113,7 +113,7 @@ export function ActionItemsList({ items, onDismiss, onComplete, isUpdating }: Ac
                         disabled={isUpdating === item.id}
                         title="Mark complete"
                       >
-                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                        <Check className="h-3.5 w-3.5 text-success" />
                       </Button>
                       <Button
                         size="icon"

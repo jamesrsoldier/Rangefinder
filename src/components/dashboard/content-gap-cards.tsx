@@ -8,16 +8,16 @@ import type { ContentGapResponse, EngineType } from "@/types";
 import { ENGINE_LABELS } from "@/lib/constants";
 
 const GAP_TYPE_CONFIG: Record<string, { label: string; icon: typeof AlertTriangle; color: string }> = {
-  no_brand_citation: { label: "No Brand Citation", icon: FileX, color: "text-red-600" },
-  competitor_only: { label: "Competitor Cited", icon: AlertTriangle, color: "text-orange-600" },
-  stale_content: { label: "Stale Content", icon: Clock, color: "text-amber-600" },
-  low_prominence: { label: "Low Position", icon: ArrowDown, color: "text-blue-600" },
+  no_brand_citation: { label: "No Brand Citation", icon: FileX, color: "text-error" },
+  competitor_only: { label: "Competitor Cited", icon: AlertTriangle, color: "text-warning" },
+  stale_content: { label: "Stale Content", icon: Clock, color: "text-warning" },
+  low_prominence: { label: "Low Position", icon: ArrowDown, color: "text-primary" },
 };
 
 function getSeverityBadge(severity: number) {
-  if (severity >= 0.7) return { label: "High", className: "bg-red-100 text-red-700 border-red-200" };
-  if (severity >= 0.4) return { label: "Medium", className: "bg-amber-100 text-amber-700 border-amber-200" };
-  return { label: "Low", className: "bg-slate-100 text-slate-600 border-slate-200" };
+  if (severity >= 0.7) return { label: "High", className: "bg-error-muted text-error-muted-foreground border-error/20" };
+  if (severity >= 0.4) return { label: "Medium", className: "bg-warning-muted text-warning-muted-foreground border-warning/20" };
+  return { label: "Low", className: "bg-muted text-muted-foreground border-border" };
 }
 
 interface ContentGapCardsProps {

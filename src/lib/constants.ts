@@ -1,11 +1,11 @@
 import type { EngineType } from "@/types";
 
 export const ENGINE_COLORS: Record<EngineType, string> = {
-  perplexity: "#20808D",
-  google_ai_overview: "#4285F4",
-  chatgpt: "#10A37F",
-  bing_copilot: "#00BCF2",
-  claude: "#D97706",
+  perplexity: "hsl(var(--engine-perplexity))",
+  google_ai_overview: "hsl(var(--engine-google))",
+  chatgpt: "hsl(var(--engine-chatgpt))",
+  bing_copilot: "hsl(var(--engine-bing))",
+  claude: "hsl(var(--engine-claude))",
 };
 
 export const ENGINE_LABELS: Record<EngineType, string> = {

@@ -2,6 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { chartTooltipStyle, chartAxisTickStyle } from "@/lib/chart-theme";
 import { ENGINE_COLORS, ENGINE_LABELS } from "@/lib/constants";
 import type { EngineType } from "@/types";
 
@@ -25,10 +26,10 @@ export function EngineBarChart({ data }: EngineBarChartProps) {
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={formatted} layout="vertical" margin={{ left: 20 }}>
-              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 12 }} />
-              <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12 }} />
+              <XAxis type="number" domain={[0, 100]} tick={chartAxisTickStyle} />
+              <YAxis type="category" dataKey="name" width={100} tick={chartAxisTickStyle} />
               <Tooltip
-                contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
+                contentStyle={chartTooltipStyle}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 formatter={(value: any) => [`${Number(value).toFixed(1)}`, "Score"]}
               />
