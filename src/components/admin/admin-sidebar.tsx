@@ -7,6 +7,7 @@ import {
   Users,
   Building2,
   FolderKanban,
+  FileText,
   ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ const adminNavItems = [
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/organizations", label: "Organizations", icon: Building2 },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
+  { href: "/admin/reports", label: "Reports", icon: FileText },
 ];
 
 export function AdminSidebar() {
