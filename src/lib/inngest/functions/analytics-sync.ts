@@ -15,7 +15,7 @@ import type { SubscriptionTier } from '@/types';
 export const analyticsSync = inngest.createFunction(
   {
     id: 'analytics-sync',
-    concurrency: { limit: 10 },
+    concurrency: { limit: 5 },
     retries: 2,
   },
   { cron: '0 8 * * *' },

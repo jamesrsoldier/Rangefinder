@@ -24,7 +24,7 @@ import type { AlertType, EngineType } from '@/types';
 export const alertEvaluator = inngest.createFunction(
   {
     id: 'alert-evaluator',
-    concurrency: { limit: 10 },
+    concurrency: { limit: 5 },
     retries: 2,
   },
   { event: 'alerts/evaluate' },
