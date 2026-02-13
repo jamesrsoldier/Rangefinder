@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { useProject } from "@/hooks/use-project";
 import { useKeywords } from "@/hooks/use-dashboard-data";
 import { useOptimizationSummary } from "@/hooks/use-optimization-data";
+import { useScanStatus } from "@/hooks/use-scan-status";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -84,18 +85,17 @@ export function KeywordsContent() {
   const { projectId, isLoading: projectLoading } = useProject();
   const { data: keywords, isLoading, error, mutate } = useKeywords(projectId);
   const { data: optSummary } = useOptimizationSummary(projectId);
+  const { isScanning, triggerScan, lastMessage } = useScanStatus();
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [bulkText, setBulkText] = useState("");
   const [category, setCategory] = useState("");
   const [saving, setSaving] = useState(false);
-  const [scanning, setScanning] = useState(false);
-  const [scanMessage, setScanMessage] = useState<string | null>(null);
 
-  // Fetch recent scan history
-  const { data: recentRuns, mutate: mutateRuns } = useSWR<QueryRun[]>(
+  // Fetch recent scan history — the ScanProvider handles fast polling while scanning
+  const { data: recentRuns } = useSWR<QueryRun[]>(
     projectId ? `/api/projects/${projectId}/monitoring?limit=5` : null,
     fetcher,
-    { refreshInterval: scanning ? 3000 : 0 } // Poll while scanning
+    { refreshInterval: isScanning ? 3000 : 30000, dedupingInterval: 2000 }
   );
 
   // Tier comes from org-level billing; default to free when unknown
@@ -103,37 +103,10 @@ export function KeywordsContent() {
   const limits = PLAN_LIMITS[tier];
   const keywordCount = keywords?.length ?? 0;
 
-  const isRunning = recentRuns?.some((r) => r.status === "running" || r.status === "pending");
-
   const handleRunScan = useCallback(async () => {
-    if (!projectId || scanning) return;
-    setScanning(true);
-    setScanMessage(null);
-
-    try {
-      const res = await fetch(`/api/projects/${projectId}/monitoring`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setScanMessage(data.error || "Failed to trigger scan");
-        setScanning(false);
-        return;
-      }
-
-      setScanMessage(`Scan started: ${data.totalKeywords} keywords across ${data.engineTypes.length} engine(s)`);
-      mutateRuns();
-
-      // Keep polling state for a bit, then rely on SWR refreshInterval
-      setTimeout(() => setScanning(false), 5000);
-    } catch {
-      setScanMessage("Failed to trigger scan. Is Inngest running?");
-      setScanning(false);
-    }
-  }, [projectId, scanning, mutateRuns]);
+    if (!projectId || isScanning) return;
+    await triggerScan(projectId);
+  }, [projectId, isScanning, triggerScan]);
 
   if (projectLoading || isLoading) return <TableSkeleton rows={10} />;
   if (error) return <InlineError message="Failed to load keywords" onRetry={() => mutate()} />;
@@ -206,14 +179,14 @@ export function KeywordsContent() {
             size="sm"
             variant="outline"
             onClick={handleRunScan}
-            disabled={scanning || isRunning || keywordCount === 0}
+            disabled={isScanning || keywordCount === 0}
           >
-            {scanning || isRunning ? (
+            {isScanning ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Radar className="mr-2 h-4 w-4" />
             )}
-            {scanning || isRunning ? "Scanning..." : "Run Scan"}
+            {isScanning ? "Scanning..." : "Run Scan"}
           </Button>
 
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -260,9 +233,9 @@ export function KeywordsContent() {
       </div>
 
       {/* Scan message */}
-      {scanMessage && (
+      {lastMessage && (
         <div className="rounded-lg border bg-muted/50 p-3 text-sm text-muted-foreground">
-          {scanMessage}
+          {lastMessage}
         </div>
       )}
 

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Topbar } from "@/components/dashboard/topbar";
+import { ScanAwareWrapper } from "@/components/dashboard/scan-aware-wrapper";
 
 export default function DashboardLayout({
   children,
@@ -15,7 +16,9 @@ export default function DashboardLayout({
           <Topbar />
         </Suspense>
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <Suspense>{children}</Suspense>
+          <Suspense>
+            <ScanAwareWrapper>{children}</ScanAwareWrapper>
+          </Suspense>
         </main>
       </div>
     </div>
